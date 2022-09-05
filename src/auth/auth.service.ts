@@ -5,6 +5,7 @@ import { UserDTO } from 'src/users/dto/out/user.dto';
 import { UsersService } from '../users/users.service';
 import { AccessTokenDto } from './dto/out/access-token.dto';
 import { LoginDTO } from './dto/out/login-dto';
+import { RefreshDTO } from './dto/out/refresh.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,25 +29,28 @@ export class AuthService {
     return null;
   }
 
-  async login(user: UserDTO) {
+  async login(user: UserDTO): Promise<LoginDTO> {
     const newToken = this.makeJwtToken(user, 'new');
     const refreshToken = this.makeJwtToken(user, 'refresh');
 
     this.usersService.userUpdateRefreshToken(user.id, refreshToken);
 
     return new LoginDTO({
-      access_token: newToken,
-      refresh_token: refreshToken,
+      tokens: {
+        access_token: newToken,
+        refresh_token: refreshToken,
+      },
+      user,
     });
   }
 
-  async refreshToken(token: string): Promise<LoginDTO> {
+  async refreshToken(token: string): Promise<RefreshDTO> {
     const user = await this.usersService.findOneByRefreshToken(token);
     const newToken = this.makeJwtToken(user, 'new');
     const refreshToken = this.makeJwtToken(user, 'refresh');
     this.usersService.userUpdateRefreshToken(user.id, refreshToken);
 
-    return new LoginDTO({
+    return new RefreshDTO({
       access_token: newToken,
       refresh_token: refreshToken,
     });

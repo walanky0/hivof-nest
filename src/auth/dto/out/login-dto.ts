@@ -1,13 +1,14 @@
-import { IsString } from 'class-validator';
+import { UserDTO } from 'src/users/dto/out/user.dto';
 
 export class LoginDTO {
   constructor(partial: Partial<LoginDTO>) {
     Object.assign(this, partial);
   }
 
-  @IsString()
-  access_token: string;
+  tokens: {
+    access_token: string;
+    refresh_token: string;
+  };
 
-  @IsString()
-  refresh_token: string;
+  user: UserDTO;
 }

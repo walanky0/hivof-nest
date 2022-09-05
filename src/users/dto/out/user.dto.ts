@@ -21,4 +21,7 @@ export class UserDTO {
 
   @Exclude()
   password: string;
+
+  @Exclude()
+  refreshToken: string;
 }
